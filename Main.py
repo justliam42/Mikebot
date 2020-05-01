@@ -7,6 +7,8 @@ import requests
 from io import BytesIO
 from random import randint
 from Dict import mikes
+import requests
+import json
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -25,8 +27,6 @@ sentence = ""
 @client.event
 async def on_ready():
     print("ready")
-
-
 
 @client.event
 async def on_message(message):
@@ -204,15 +204,15 @@ async def on_message(message):
 
 
     # !say
-    if message.author.permissions_in(message.channel).administrator:
+    if not message.author.bot and message.author.permissions_in(message.channel).administrator:
         if message.content.lower().startswith("!say "):
             await message.channel.send(message.content[5:])
-            await message.delete
+            await message.delete()
 
     # other commands
-    if message.channel != storychannel and message.channel != archivechannel:
+    if not message.author.bot and message.channel != storychannel and message.channel != archivechannel:
         # thanks mikebot
-        if message.content.lower() == "thanks mikebot":
+        if message.content.lower().startswith("thanks mike"):
             await message.channel.send("You're Welcome!")
             print(f"Received thanks from {message.author}!")
 
@@ -294,6 +294,23 @@ async def on_message(message):
             mikey.save('mikey.png')
             await message.channel.send(file=discord.File('mikey.png'))
             os.remove("mikey.png")
+
+        # fake
+        if message.content.lower().startswith("!fake") and len(message.mentions) == 1 and message.mentions[0] != client.user and len(message.content) > 28:
+            content = message.content[28:]
+            user = message.mentions[0]
+            webhook = await message.channel.create_webhook(name = "mikehook")
+            if "@everyone" in content:
+                content=content[0:content.index("@everyone")+1]+" "+content[content.index("@everyone")+1:]
+            if "@here" in content:
+                content=content[0:content.index("@here")+1]+" "+content[content.index("@here")+1:]
+
+            username = user.display_name
+            avatar_url = str(user.avatar_url).strip("'<Asset url='")
+            avatar_url = avatar_url.strip("'>")
+            await webhook.send(content, username=username, avatar_url=avatar_url)
+            await webhook.delete()
+            await message.delete()
 
 
 @client.event
