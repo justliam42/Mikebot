@@ -6,7 +6,7 @@ from PIL import ImageFilter
 import asyncio
 from io import BytesIO
 from random import randint
-from Dict import mikes, help1, help2, help3
+from Dict import mikes, help
 import requests
 import json
 import threading
@@ -308,19 +308,24 @@ async def on_message(message):
         await webhook.delete()
         await message.delete()
         return
-    #help
+    # help
     if message.content.lower() == "!mikehelp":
-        for i in [help1, help2, help3]:
+        for i in help:
             help_embed = discord.Embed.from_dict(i)
             await message.channel.send(embed=help_embed)
 
-    #spam
+    # spam
     if message.content.lower().startswith("!spam "):
-        if message.author.permissions_in(message.channel).administrator:
+        spam = True
+        if len(message.mentions) >= 1:
+            if message.author.permissions_in(message.channel).administrator:
+                spam = True
+            else:
+                await message.channel.send("You need to be an admin")
+                spam = False
+        if spam:
             for i in range(10):
                 await message.channel.send(message.content[6:])
-        else:
-            await message.channel.send("You need to be an admin")
 
     #yesno
     if message.content.lower().startswith("!yesno "):
