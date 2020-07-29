@@ -8,8 +8,7 @@ from io import BytesIO
 from random import randint
 from Dict import mikes, help
 import requests
-import json
-import threading
+
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -334,6 +333,7 @@ async def on_message(message):
         await yesno.add_reaction("❌")
         await message.delete()
         return
+
 @client.event
 async def on_reaction_add(reaction, user):
     message = reaction.message
