@@ -22,6 +22,8 @@ shoot = []
 rps = []
 rps_emotes = ['rock', 'paper', 'scissors']
 emotes = ['<:rock:722536684431999007>', '<:paper:722548284643737703>', '<:scissors:722550422409052261>']
+im = ["im", "i'm", "i’m", "i am"]
+
 
 @client.event
 async def on_ready():
@@ -30,7 +32,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == client.user or message.author.bot:
         return
         #F in chat for story
     # tictactoe
@@ -228,12 +230,22 @@ async def on_message(message):
             await message.channel.send("Not Enough Permissions!")
 
     # Basically dad bot
-    if message.content.lower().startswith("im "):
-        await message.channel.send(f"Hi {message.content[3:]}, I'm Mikebot.")
-    elif message.content.lower().startswith("i'm ") or message.content.lower().startswith("i’m "):
-        await message.channel.send(f"Hi {message.content[4:]}, I'm Mikebot.")
-    elif message.content.lower().startswith("i am "):
-        await message.channel.send(f"Hi {message.content[5:]}, I'm Mikebot.")
+    dad = False
+    dad_position = -1
+    words = list(message.content.split())
+    for i in range(len(words)):
+        if words[i].lower() in im:
+            dad = True
+            dad_position = i
+            break
+
+    if dad:
+        dadbot = ""
+        for i in message.content.split()[dad_position + 1:]:
+            dadbot += i
+            dadbot += " "
+        if dadbot.strip() != "":
+            await message.channel.send(f"hi {dadbot.strip()}, i'm Mikebot")
 
     # Imagine
     if message.content.lower().startswith('imagine'):
