@@ -16,7 +16,10 @@ GUILD = os.getenv('DISCORD_GUILD')
 TICTACCHANNEL = os.getenv('TICTACTOE')
 tictac = []
 tick = 0
-client = discord.Client()
+intents = discord.Intents.all()
+
+
+client = discord.Client(intents=intents)
 sentence = ""
 shoot = []
 rps = []
